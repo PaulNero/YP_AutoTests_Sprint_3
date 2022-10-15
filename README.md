@@ -1,7 +1,7 @@
 # Финальное задание:  Sprint_3
 
 ## Для запуска тестов можно использовать:
-> pytest -m all
+> pytest -v -s tests
 
 Запуск всех тестов.   
 > pytest -m registration
@@ -42,57 +42,57 @@
 Содержит позитивные и негативные тесты для регистрации:  
 
 Positive:  
-> test_registration_via_private_cabinet_chrome_success()
+> test_registration_via_private_cabinet
 
 Регистрация при переходе через личный кабинет.   
-> test_registration_via_chrome_enter_to_account_browser_success()
+> test_registration_via_chrome_enter_to_account
 
 Регистрация при переходе через кнопку "Войти в аккаунт".  
 
 Negative:   
-> test_field_name_not_empty_chrome_failed_registration()
+> test_field_name_not_empty_failed_registration()
 
 Проверка, что поле имя при регистрации не может быть пустым.  
-> test_wrong_password_error_chrome_failed_registration()
+> test_wrong_password_error_failed_registration()
 
 Проверка появления ошибки при вводе неверного пароля.  
-> test_minimal_len_password_chrome_failed_registration()
+> test_minimal_len_password_failed_registration()
 
 Проверка минимальной длины пароля в 5 символов.  
-> test_email_format_chrome_failed_registration()
+> test_email_format_failed_registration()
 
 Проверка формата email при регистрации.
 
 #### test_02_login.py
-> test_login_page_via_private_cabinet_button_chrome_success()
+> test_login_page_via_private_cabinet_button()
 
 Проверка логина через личный кабинет.  
-> test_login_page_via_enter_account_button_chrome_success() 
+> test_login_page_via_enter_account_button() 
 
 Проверка логина через кнопку "Войти в аккаунт"   
-> test_login_page_via_registration_chrome_success()
+> test_login_page_via_registration()
 
 Проверка логина после возврата на страницу логина со страницы регистрации.  
-> test_login_page_via_forgot_password_chrome_success() 
+> test_login_page_via_forgot_password_chrome() 
 
 Проверка логина после возврата на страницу логина со страницы "Забыли пароль". 
 
 #### test_03_enter_to_private_cabinet.py
-> test_enter_private_cabinet_chrome_success() 
+> test_enter_private_cabinet() 
 
 Проверка перехода в личный кабинет после логина
 
 #### test_04_open_constructor_via_cabinet.py
-> test_enter_constructor_from_cabinet_via_constructor_button_chrome_success()
+> test_enter_constructor_from_cabinet_via_constructor_button()
  
 Проверка перехода к конструктору через личный кабинет.
 
 #### test_05_exit_from_account.py
-> test_exit_private_cabinet_chrome_success()
+> test_exit_private_cabinet()
  
 Проверка выхода из аккаунта.
 
 #### test_06_change_constructor_parts.py
-> test_change_constructor_parts_chrome_parts_changed()
+> test_change_constructor_parts_parts_changed()
 
 Проверка переключения разделов конструктора.
