@@ -11,7 +11,7 @@ pipeline {
         stage('pull_code') {
             when {
                 anyOf {
-                    branch 'main'
+                    branch 'origin/main'
                     expression {
                         params['RUN-TYPE'] == 'manual'
                     }
@@ -25,7 +25,7 @@ pipeline {
         stage('prepare_environment') {
             when {
                 anyOf {
-                    branch 'main'
+                    branch 'origin/main'
                     expression {
                         params['RUN-TYPE'] == 'manual'
                     }
@@ -39,7 +39,7 @@ pipeline {
         stage('install_dependencies') {
             when {
                 anyOf {
-                    branch 'main'
+                    branch 'origin/main'
                     expression {
                         params['RUN-TYPE'] == 'manual'
                     }
@@ -54,7 +54,7 @@ pipeline {
         stage('run_tests') {
             when {
                 anyOf {
-                    branch 'main'
+                    branch 'origin/main'
                     expression {
                         params['RUN-TYPE'] == 'manual'
                     }
