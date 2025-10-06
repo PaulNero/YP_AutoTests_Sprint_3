@@ -8,18 +8,20 @@ pipeline {
         pollSCM('H/6 * * * *')
     }
     stages {
-        stage('branch_debug') {
-            steps {
-                echo "GIT_BRANCH: ${env.GIT_BRANCH}"
-                echo "BRANCH_NAME: ${env.BRANCH_NAME}"
-            }
-        }
+        // stage('branch_debug') {
+        //     steps {
+        //         echo "GIT_BRANCH: ${env.GIT_BRANCH}"
+        //         echo "BRANCH_NAME: ${env.BRANCH_NAME}"
+        //     }
+        // }
         stage('pull_code') {
             when {
                 anyOf {
-                    branch 'origin/main'
-                    expression {
-                        params['RUN-TYPE'] == 'manual'
+                    expression { 
+                        env.GIT_BRANCH == 'origin/main' 
+                    }
+                    expression { 
+                        params['RUN-TYPE'] == 'manual' 
                     }
                 }
             }   
@@ -31,8 +33,10 @@ pipeline {
         stage('prepare_environment') {
             when {
                 anyOf {
-                    branch 'origin/main'
-                    expression {
+                    expression { 
+                        env.GIT_BRANCH == 'origin/main' 
+                    }
+                    expression { 
                         params['RUN-TYPE'] == 'manual'
                     }
                 }
@@ -45,8 +49,10 @@ pipeline {
         stage('install_dependencies') {
             when {
                 anyOf {
-                    branch 'origin/main'
-                    expression {
+                    expression { 
+                        env.GIT_BRANCH == 'origin/main' 
+                    }
+                    expression { 
                         params['RUN-TYPE'] == 'manual'
                     }
                 }
@@ -60,8 +66,10 @@ pipeline {
         stage('run_tests') {
             when {
                 anyOf {
-                    branch 'origin/main'
-                    expression {
+                    expression { 
+                        env.GIT_BRANCH == 'origin/main' 
+                    }
+                    expression { 
                         params['RUN-TYPE'] == 'manual'
                     }
                 }
