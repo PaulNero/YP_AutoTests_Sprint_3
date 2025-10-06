@@ -1,4 +1,9 @@
-main_link = 'https://stellarburgers.nomoreparties.site/'
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+main_link = os.getenv('MAIN_LINK')
 
 login_link = 'login'
 register_link = 'register'
