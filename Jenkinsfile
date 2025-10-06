@@ -7,13 +7,10 @@ pipeline {
         githubPush()
         pollSCM('H/6 * * * *')
     }
+    environment {
+        PATH = "/var/lib/jenkins/.local/bin:${env.PATH}"
+    }
     stages {
-        // stage('branch_debug') {
-        //     steps {
-        //         echo "GIT_BRANCH: ${env.GIT_BRANCH}"
-        //         echo "BRANCH_NAME: ${env.BRANCH_NAME}"
-        //     }
-        // }
         stage('pull_code') {
             when {
                 anyOf {
@@ -82,8 +79,12 @@ EOF
             }
             steps {
                 echo 'Installing dependencies...'
-                sh 'pip install poetry || true'
-                sh 'poetry install || true'
+                sh '''
+                    if ! command -v poetry &> /dev/null; then
+                        pip install poetry
+                    fi
+                    poetry install
+                '''
             }
         }
         stage('run_tests') {
