@@ -27,7 +27,9 @@ pipeline {
             }   
             steps {
                 echo 'Pulling code...'
-                git url: 'https://github.com/PaulNero/yp-autotests-sprint-3.git', branch: 'main'
+                git credentialsId: 'SSH_YP_AutoTests_Sprint_3', 
+                    url: 'git@github-yp_autotests_sprint_3:PaulNero/YP_AutoTests_Sprint_3.git',
+                    branch: 'main'
             }
         }
         stage('prepare_environment') {
