@@ -45,7 +45,28 @@ pipeline {
             }
             steps {
                 echo 'Preparing environment...'
-                writeFile file: '.env', text: "NAME=${NAME}\nPASSWORD_RIGHT=${PASSWORD_RIGHT}\nPASSWORD_6_SYMBOLS=${PASSWORD_6_SYMBOLS}\nPASSWORD_WRONG=${PASSWORD_WRONG}\nDELAY=${DELAY}\nEMAIL_FOR_LOGIN=${EMAIL_FOR_LOGIN}\nMAIN_LINK=${MAIN_LINK}"
+                withCredentials([
+                    string(credentialsId: 'NAME', variable: 'NAME'),
+                    string(credentialsId: 'PASSWORD_RIGHT', variable: 'PASSWORD_RIGHT'),
+                    string(credentialsId: 'PASSWORD_6_SYMBOLS', variable: 'PASSWORD_6_SYMBOLS'),
+                    string(credentialsId: 'PASSWORD_WRONG', variable: 'PASSWORD_WRONG'),
+                    string(credentialsId: 'DELAY', variable: 'DELAY'),
+                    string(credentialsId: 'EMAIL_FOR_LOGIN', variable: 'EMAIL_FOR_LOGIN'),
+                    string(credentialsId: 'MAIN_LINK', variable: 'MAIN_LINK')
+                ]) {
+                    sh '''
+                        cat > .env << EOF
+NAME=${NAME}
+PASSWORD_RIGHT=${PASSWORD_RIGHT}
+PASSWORD_6_SYMBOLS=${PASSWORD_6_SYMBOLS}
+PASSWORD_WRONG=${PASSWORD_WRONG}
+DELAY=${DELAY}
+EMAIL_FOR_LOGIN=${EMAIL_FOR_LOGIN}
+MAIN_LINK=${MAIN_LINK}
+EOF
+                        chmod 600 .env
+                    '''
+                }
             }
         }
         stage('install_dependencies') {
