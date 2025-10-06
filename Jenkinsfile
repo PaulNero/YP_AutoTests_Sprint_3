@@ -13,7 +13,7 @@ pipeline {
                 anyOf {
                     branch 'main'
                     expression {
-                        params.RUN-TYPE == 'manual'
+                        params.['RUN-TYPE'] == 'manual'
                     }
                 }
             }   
@@ -27,7 +27,7 @@ pipeline {
                 anyOf {
                     branch 'main'
                     expression {
-                        params.RUN-TYPE == 'manual'
+                        params.['RUN-TYPE'] == 'manual'
                     }
                 }
             }
@@ -41,7 +41,7 @@ pipeline {
                 anyOf {
                     branch 'main'
                     expression {
-                        params.RUN-TYPE == 'manual'
+                        params.['RUN-TYPE'] == 'manual'
                     }
                 }
             }
@@ -56,7 +56,7 @@ pipeline {
                 anyOf {
                     branch 'main'
                     expression {
-                        params.RUN-TYPE == 'manual'
+                        params.['RUN-TYPE'] == 'manual'
                     }
                 }
             }
