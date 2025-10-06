@@ -8,6 +8,12 @@ pipeline {
         pollSCM('H/6 * * * *')
     }
     stages {
+        stage('branch_debug') {
+            steps {
+                echo "GIT_BRANCH: ${env.GIT_BRANCH}"
+                echo "BRANCH_NAME: ${env.BRANCH_NAME}"
+            }
+        }
         stage('pull_code') {
             when {
                 anyOf {
