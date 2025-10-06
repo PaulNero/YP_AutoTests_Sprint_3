@@ -13,10 +13,10 @@ pipeline {
                 anyOf {
                     branch 'main'
                     expression {
-                        params.RUN_TYPE == 'manual'
+                        params.RUN-TYPE == 'manual'
                     }
                 }
-            }
+            }   
             steps {
                 echo 'Pulling code...'
                 git url: 'https://github.com/PaulNero/yp-autotests-sprint-3.git', branch: 'main'
@@ -27,7 +27,7 @@ pipeline {
                 anyOf {
                     branch 'main'
                     expression {
-                        params.RUN_TYPE == 'manual'
+                        params.RUN-TYPE == 'manual'
                     }
                 }
             }
@@ -41,7 +41,7 @@ pipeline {
                 anyOf {
                     branch 'main'
                     expression {
-                        params.RUN_TYPE == 'manual'
+                        params.RUN-TYPE == 'manual'
                     }
                 }
             }
@@ -56,7 +56,7 @@ pipeline {
                 anyOf {
                     branch 'main'
                     expression {
-                        params.RUN_TYPE == 'manual'
+                        params.RUN-TYPE == 'manual'
                     }
                 }
             }
