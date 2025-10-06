@@ -1,7 +1,19 @@
 pipeline {
     agent any
-    environment {
-        PYTHON_VERSION = '3.10'
+    parameters {
+        string(name: 'RUN-TYPE', defaultValue: 'auto', description: 'Type of run: auto or manual')
+    }
+    triggers {
+        githubWebhook()
+        pollSCM('H/6 * * * *')
+    }
+    when {
+        anyOf {
+            branch 'main'
+            expression {
+                params.RUN_TYPE == 'manual'
+            }
+        }
     }
     stages {
         stage('pull_code') {
@@ -29,9 +41,5 @@ pipeline {
                 sh 'poetry run pytest'
             }
         }
-    }
-    triggers {
-        githubWebhook()
-        pollSCM('H/6 * * * *')
     }
 }
