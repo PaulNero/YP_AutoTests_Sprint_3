@@ -12,7 +12,8 @@ def driver():
     options = Options()
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
-    driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options)
+    options.add_argument('--window-size=1920,1080')
+    driver = webdriver.Chrome(options=options)
     driver.get(links.main_link)
     yield driver
     driver.quit()
