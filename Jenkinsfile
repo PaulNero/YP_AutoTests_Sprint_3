@@ -83,7 +83,7 @@ EOF
                     if ! command -v poetry &> /dev/null; then
                         pip install poetry
                     fi
-                    poetry install
+                    poetry install --no-root
                 '''
             }
         }
