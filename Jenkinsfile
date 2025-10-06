@@ -82,8 +82,8 @@ EOF
             }
             steps {
                 echo 'Installing dependencies...'
-                sh 'pip install poetry' || true
-                sh 'poetry install' || true
+                sh 'pip install poetry || true'
+                sh 'poetry install || true'
             }
         }
         stage('run_tests') {
