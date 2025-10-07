@@ -6,6 +6,15 @@ pipeline {
         }
     }
 
+    parameters {
+        string(name: 'RUN-TYPE', defaultValue: 'auto', description: 'Type of run: auto or manual')
+    }
+
+    triggers {
+        githubPush()
+        pollSCM('H H/24 * * *')
+    }
+
     environment {
         POETRY_HOME = '/root/.local'
         PATH = '/root/.local/bin:$PATH'
