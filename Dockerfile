@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM python:3.10-slim
 
 RUN apt-get update -y && apt-get install -y \
     curl \
@@ -7,9 +7,6 @@ RUN apt-get update -y && apt-get install -y \
     fonts-liberation \
     xdg-utils \
     wget \
-    python3 \
-    python3-pip \
-    python3-venv \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
