@@ -1,154 +1,65 @@
 pipeline {
     agent {
-        dockerfile {
-            filename 'Dockerfile'
-            // label 'docker' Убрал пока использую мастер ноду
-            additionalBuildArgs '--no-cache'
-            args '--shm-size=2g'
+        docker {
+            image 'python:3.10-slim'
+            args '--network host --shm-size=2g -v /var/lib/jenkins/.cache/pypoetry:/root/.cache/pypoetry'
         }
     }
-    parameters {
-        string(name: 'RUN-TYPE', defaultValue: 'auto', description: 'Type of run: auto or manual')
-    }
-    triggers {
-        githubPush()
-        pollSCM('H H/6 * * *')
-    }
+
     environment {
-        PATH = "/var/lib/jenkins/.local/bin:${env.PATH}"
+        POETRY_HOME = '/root/.local'
+        PATH = '/root/.local/bin:$PATH'
+        PYTHONUNBUFFERED = '1'
+        PIP_DISABLE_PIP_VERSION_CHECK = 'on'
     }
+
     stages {
-        // stage('branch_debug') {
-        //     steps {
-        //         echo "GIT_BRANCH: ${env.GIT_BRANCH}"
-        //         echo "BRANCH_NAME: ${env.BRANCH_NAME}"
-        //     }
-        // }
-        // stage('check_and_install_chrome') {
-        //     steps {
-        //         echo 'Checking Chrome installation...'
-        //         sh '''
-        //             # Проверка и установка Google Chrome
-        //             if ! command -v google-chrome &> /dev/null; then
-        //                 echo "Chrome not found, installing..."
-        //                 wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-        //                 sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get install -f -y
-        //                 rm google-chrome-stable_current_amd64.deb
-        //                 echo "Chrome installed: $(google-chrome --version)"
-        //             else
-        //                 echo "Chrome already installed: $(google-chrome --version)"
-        //             fi
-        //         '''
-        //     }
-        // }
-        stage('Check') { 
-            steps { 
+        stage('Setup') {
+            steps {
+                echo 'Installing system deps and Poetry...'
                 sh '''
-if ! command -v google-chrome && ! command -v google-chrome-stable; then
-    echo "Chrome not installed"
-    exit 1
-fi
-google-chrome --version || google-chrome-stable --version
-echo "Chrome installed"
-'''
-            } 
-        }
-        stage('pull_code') {
-            when {
-                anyOf {
-                    expression { 
-                        env.GIT_BRANCH == 'origin/main' 
-                    }
-                    expression { 
-                        params['RUN-TYPE'] == 'manual' 
-                    }
-                }
-            }   
-            steps {
-                echo 'Pulling code...'
-                git credentialsId: 'SSH_YP_AutoTests_Sprint_3', 
-                    url: 'git@github-yp_autotests_sprint_3:PaulNero/YP_AutoTests_Sprint_3.git',
-                    branch: 'main'
-            }
-        }
-        stage('prepare_environment') {
-            when {
-                anyOf {
-                    expression { 
-                        env.GIT_BRANCH == 'origin/main' 
-                    }
-                    expression { 
-                        params['RUN-TYPE'] == 'manual'
-                    }
-                }
-            }
-            steps {
-                echo 'Preparing environment...'
-                withCredentials([
-                    string(credentialsId: 'NAME', variable: 'NAME'),
-                    string(credentialsId: 'PASSWORD_RIGHT', variable: 'PASSWORD_RIGHT'),
-                    string(credentialsId: 'PASSWORD_6_SYMBOLS', variable: 'PASSWORD_6_SYMBOLS'),
-                    string(credentialsId: 'PASSWORD_WRONG', variable: 'PASSWORD_WRONG'),
-                    string(credentialsId: 'DELAY', variable: 'DELAY'),
-                    string(credentialsId: 'EMAIL_FOR_LOGIN', variable: 'EMAIL_FOR_LOGIN'),
-                    string(credentialsId: 'MAIN_LINK', variable: 'MAIN_LINK')
-                ]) {
-                    sh '''
-                        cat > .env << EOF
-NAME=${NAME}
-PASSWORD_RIGHT=${PASSWORD_RIGHT}
-PASSWORD_6_SYMBOLS=${PASSWORD_6_SYMBOLS}
-PASSWORD_WRONG=${PASSWORD_WRONG}
-DELAY=${DELAY}
-EMAIL_FOR_LOGIN=${EMAIL_FOR_LOGIN}
-MAIN_LINK=${MAIN_LINK}
-EOF
-                        chmod 600 .env
-                    '''
-                }
-            }
-        }
-        stage('install_dependencies') {
-            when {
-                anyOf {
-                    expression { 
-                        env.GIT_BRANCH == 'origin/main' 
-                    }
-                    expression { 
-                        params['RUN-TYPE'] == 'manual'
-                    }
-                }
-            }
-            steps {
-                echo 'Installing dependencies...'
-                sh '''
-                    if ! command -v poetry &> /dev/null; then
-                        pip install poetry
-                    fi
-                    poetry install --no-root
+                    apt-get update -y && apt-get install -y curl build-essential libffi-dev libssl-dev git
+                    pip install --no-cache-dir poetry
                 '''
             }
         }
-        stage('run_tests') {
-            when {
-                anyOf {
-                    expression { 
-                        env.GIT_BRANCH == 'origin/main' 
-                    }
-                    expression { 
-                        params['RUN-TYPE'] == 'manual'
-                    }
-                }
+
+        stage('Install dependencies') {
+            steps {
+                echo 'Installing project dependencies via Poetry...'
+                sh '''
+                    poetry config virtualenvs.create true
+                    poetry config virtualenvs.in-project true
+                    poetry install --no-root -vvv
+                '''
             }
+        }
+
+        stage('Run tests') {
             steps {
                 echo 'Running tests...'
-                sh 'poetry run pytest --junitxml=pytest-results.xml'
+                sh '''
+                    poetry run pytest --maxfail=3 --disable-warnings -q --junitxml=pytest-results.xml
+                '''
             }
             post {
-                    always {
-                        junit '**/pytest-results.xml'
-                    }
+                always {
+                    junit 'pytest-results.xml'
                 }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Tests passed successfully!'
+        }
+        failure {
+            echo '❌ Tests failed. Check the report above.'
+        }
+        cleanup {
+            echo '🧹 Cleaning up temporary files...'
+            sh 'rm -rf /root/.cache/pip'
         }
     }
 }
