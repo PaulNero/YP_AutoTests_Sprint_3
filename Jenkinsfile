@@ -2,7 +2,7 @@ pipeline {
     agent {
         dockerfile {
             filename 'Dockerfile'
-            label 'docker'
+            // label 'docker' Убрал пока использую мастер ноду
             additionalBuildArgs '--no-cache'
             args '--shm-size=2g'
         }
