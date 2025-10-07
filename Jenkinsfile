@@ -108,27 +108,27 @@ EOF
                 }
             }
         }
-        // stage('install_dependencies') {
-        //     when {
-        //         anyOf {
-        //             expression { 
-        //                 env.GIT_BRANCH == 'origin/main' 
-        //             }
-        //             expression { 
-        //                 params['RUN-TYPE'] == 'manual'
-        //             }
-        //         }
-        //     }
-        //     steps {
-        //         echo 'Installing dependencies...'
-        //         sh '''
-        //             if ! command -v poetry &> /dev/null; then
-        //                 pip install poetry
-        //             fi
-        //             poetry install --no-root
-        //         '''
-        //     }
-        // }
+        stage('install_dependencies') {
+            when {
+                anyOf {
+                    expression { 
+                        env.GIT_BRANCH == 'origin/main' 
+                    }
+                    expression { 
+                        params['RUN-TYPE'] == 'manual'
+                    }
+                }
+            }
+            steps {
+                echo 'Installing dependencies...'
+                sh '''
+                    if ! command -v poetry &> /dev/null; then
+                        pip install poetry
+                    fi
+                    poetry install --no-root
+                '''
+            }
+        }
         stage('run_tests') {
             when {
                 anyOf {
