@@ -11,6 +11,29 @@ pipeline {
         PATH = "/var/lib/jenkins/.local/bin:${env.PATH}"
     }
     stages {
+        // stage('branch_debug') {
+        //     steps {
+        //         echo "GIT_BRANCH: ${env.GIT_BRANCH}"
+        //         echo "BRANCH_NAME: ${env.BRANCH_NAME}"
+        //     }
+        // }
+        stage('check_and_install_chrome') {
+            steps {
+                echo 'Checking Chrome installation...'
+                sh '''
+                    # Проверка и установка Google Chrome
+                    if ! command -v google-chrome &> /dev/null; then
+                        echo "Chrome not found, installing..."
+                        wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+                        sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get install -f -y
+                        rm google-chrome-stable_current_amd64.deb
+                        echo "Chrome installed: $(google-chrome --version)"
+                    else
+                        echo "Chrome already installed: $(google-chrome --version)"
+                    fi
+                '''
+            }
+        }
         stage('pull_code') {
             when {
                 anyOf {
