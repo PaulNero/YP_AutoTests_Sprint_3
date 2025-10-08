@@ -33,9 +33,12 @@ pipeline {
             steps {
                 echo 'Running tests...'
                 sh '''
-                    poetry run pytest --maxfail=3 --disable-warnings -q --junitxml=pytest-results.xml --alluredir=allure-results
-                    allure generate allure-results -o allure-report --clean
+                    poetry run pytest --maxfail=3 --disable-warnings -q --junitxml=pytest-results.xml
                 '''
+                // sh '''
+                //     poetry run pytest --maxfail=3 --disable-warnings -q --junitxml=pytest-results.xml --alluredir=allure-results
+                //     allure generate allure-results -o allure-report --clean
+                // '''
             }
             post {
                 always {
