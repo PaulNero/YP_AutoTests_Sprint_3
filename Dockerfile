@@ -34,25 +34,26 @@ RUN google-chrome --version
 # Создаем пользователя для безопасной работы
 # ===========================
 RUN groupadd -r tester && useradd -r -g tester -m tester \
-    && mkdir -p /workspace && chown tester:tester /workspace
-
-# Переключаемся на пользователя
-USER tester
-WORKDIR /workspace
+    && mkdir -p /workspace && chown tester:tester /workspace /home/tester
 
 # ===========================
 # Устанавливаем Python-зависимости
 # ===========================
 ENV PYTHONUNBUFFERED=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=on \
+    PIP_ROOT_USER_ACTION=ignore \
     POETRY_NO_INTERACTION=1 \
     POETRY_VIRTUALENVS_CREATE=true \
-    POETRY_VIRTUALENVS_IN_PROJECT=true
+    POETRY_VIRTUALENVS_IN_PROJECT=true \
+    PATH="/usr/local/bin:/home/tester/.local/bin:$PATH"
 
-RUN pip install --user poetry selenium pytest allure-pytest
+RUN pip install poetry selenium pytest allure-pytest
 
-# Добавляем PATH к установленным пакетам пользователя
-ENV PATH="/home/tester/.local/bin:$PATH"
+# ===========================
+# Переключаемся на безопасного пользователя
+# ===========================
+USER tester
+WORKDIR /workspace
 
 # ===========================
 # По умолчанию просто bash

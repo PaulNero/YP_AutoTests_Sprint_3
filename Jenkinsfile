@@ -16,7 +16,6 @@ pipeline {
     }
 
     environment {
-        PATH = '/home/tester/.local/bin:$PATH'
         PYTHONUNBUFFERED = '1'
     }
 
