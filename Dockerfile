@@ -31,10 +31,15 @@ RUN mkdir -p /etc/apt/keyrings && \
 RUN google-chrome --version
 
 # ===========================
-# Создаем пользователя для безопасной работы
+# Настраиваем пользователя с UID/GID Jenkins
 # ===========================
-RUN groupadd -r tester && useradd -r -g tester -m tester \
-    && mkdir -p /workspace && chown tester:tester /workspace /home/tester
+ARG JENKINS_UID=115
+ARG JENKINS_GID=121
+
+# Создаём группу и пользователя с нужными ID
+RUN groupadd -g ${JENKINS_GID} tester && \
+    useradd -m -u ${JENKINS_UID} -g ${JENKINS_GID} tester && \
+    mkdir -p /workspace && chown -R tester:tester /workspace /home/tester
 
 # ===========================
 # Устанавливаем Python-зависимости
@@ -47,15 +52,16 @@ ENV PYTHONUNBUFFERED=1 \
     POETRY_VIRTUALENVS_IN_PROJECT=true \
     PATH="/usr/local/bin:/home/tester/.local/bin:$PATH"
 
-RUN pip install poetry selenium pytest allure-pytest
+RUN pip install --upgrade pip && pip install poetry selenium pytest allure-pytest && \
+    rm -rf ~/.cache/pip
 
 # ===========================
-# Переключаемся на безопасного пользователя
+# Переключаемся на пользователя Jenkins
 # ===========================
 USER tester
 WORKDIR /workspace
 
 # ===========================
-# По умолчанию просто bash
+# Точка входа
 # ===========================
 CMD ["bash"]
