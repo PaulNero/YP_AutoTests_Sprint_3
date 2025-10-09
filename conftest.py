@@ -5,6 +5,8 @@ from src import links
 from selenium import webdriver
 import tempfile
 import shutil
+from datetime import datetime
+
 
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
@@ -27,13 +29,11 @@ def driver():
     
     yield driver
     
-    driver.quit()
-    
-    # Удаляем временную директорию
     try:
+        driver.quit()
+    finally:
+        # Удаляем временную директорию
         shutil.rmtree(user_data_dir)
-    except:
-        pass
 
 @pytest.fixture
 def new_email():
