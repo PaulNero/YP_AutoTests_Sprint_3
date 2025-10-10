@@ -8,11 +8,16 @@ pipeline {
 
     parameters {
         string(name: 'RUN-TYPE', defaultValue: 'auto', description: 'Type of run: auto or manual')
+        string(name: 'TEST-MARKER', defaultValue: '', description: 'Run tests for a pytest mark (leave empty to run all)\n * registration: All tests for registration.\n * login: All tests for login.\n * enter_to_cabinet: All tests for enter to cabinet\n * open_constructor: All tests for open constructor after cabinet\n * exit: All tests for exit from cabinet \n * constructor_change: All tests for change parts of constructor')
     }
 
     triggers {
         githubPush()
-        pollSCM('H H/24 * * *')
+        // Пока отключен так как сайт недоступен
+        // Проверка: https://downforeveryoneorjustme.com/stellarburgers.nomoreparties.site
+
+        // минуты, часы, день месяца, месяц, день недели
+        //pollSCM('0 3 * * *')
     }
 
     environment {
@@ -32,13 +37,15 @@ pipeline {
         stage('Run tests') {
             steps {
                 echo 'Running tests...'
-                sh '''
-                    poetry run pytest --maxfail=3 --disable-warnings -q --junitxml=pytest-results.xml
-                '''
-                // sh '''
-                //     poetry run pytest --maxfail=3 --disable-warnings -q --junitxml=pytest-results.xml --alluredir=allure-results
-                //     allure generate allure-results -o allure-report --clean
-                // '''
+                script {
+                    def pytestCmd = "poetry run pytest --maxfail=3 --disable-warnings -q --junitxml=pytest-results.xml"
+                    
+                    if (params.TEST_MARKER?.trim()) {
+                        pytestCmd += " -m ${params.TEST_MARKER}"
+                    }
+                    
+                    sh pytestCmd
+                }
             }
             post {
                 always {
