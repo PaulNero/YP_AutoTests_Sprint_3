@@ -181,4 +181,4 @@ poetry run allure generate allure-results --clean -o allure-report
 
 ---
 
-*Последнее обновление: $(date)*
+*Последнее обновление: 10.10.25
