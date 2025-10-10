@@ -1,6 +1,7 @@
 [project]
 name = "yp-autotests-sprint-3"
 version = "0.1.0"
+package-mode = false
 description = ""
 authors = [
     {name = "PaulNero",email = "58290662+PaulNero@users.noreply.github.com"}
@@ -14,7 +15,6 @@ dependencies = [
     "dotenv (>=0.9.9,<0.10.0)",
     "allure-pytest (>=2.15.0,<3.0.0)"
 ]
-
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]

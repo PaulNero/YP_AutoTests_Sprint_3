@@ -1,16 +1,20 @@
 import pytest
 import random
 import string
+import allure
 from src import links
 from selenium import webdriver
+from selenium.common.exceptions import WebDriverException
 import tempfile
 import shutil
+from datetime import datetime
+
 
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 
 @pytest.fixture(scope='function')
-def driver():
+def driver(request):
     options = Options()
     options.add_argument('--headless')
     options.add_argument('--disable-gpu')
@@ -23,17 +27,31 @@ def driver():
     options.add_argument(f'--user-data-dir={user_data_dir}')
     
     driver = webdriver.Chrome(options=options)
-    driver.get(links.main_link)
-    
-    yield driver
-    
-    driver.quit()
-    
-    # Удаляем временную директорию
+    test_name = request.node.name
+    print(f"\n[DRIVER STARTED] {test_name}")
+
     try:
-        shutil.rmtree(user_data_dir)
-    except:
-        pass
+        with allure.step(f'Открыть главную страницу: {links.main_link}'):
+            driver.get(links.main_link)
+    except WebDriverException as e:
+        error_message = f'Сервис {links.main_link} недоступен - тест "{test_name}" пропущен.\nОшибка: {str(e)}'
+        print(f"[ERROR] {error_message}")
+        with allure.step("Ошибка подключения к сайту"):
+            allure.attach(str(e), name="Дополнительная информация", attachment_type=allure.attachment_type.TEXT)
+        pytest.skip(error_message)
+    else:
+        yield driver
+    finally:
+        with allure.step('Закрытие драйвера и очистка ресурсов'):
+            try:
+                driver.quit()
+                print(f"[DRIVER CLOSED] {test_name}")
+            except Exception as e:
+                print(f"[ERROR] Ошибка при закрытии драйвера: {e}")
+            # Удаляем временную директорию
+            shutil.rmtree(user_data_dir)
+
+
 
 @pytest.fixture
 def new_email():
