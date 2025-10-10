@@ -1,5 +1,5 @@
 import allure
-from src.utils import attach_screenshot_and_log
+from utils.utils import attach_screenshot_and_log
 
 
 

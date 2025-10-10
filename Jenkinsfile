@@ -13,7 +13,11 @@ pipeline {
 
     triggers {
         githubPush()
-        pollSCM('0 3 * * *') // минуты, часы, день месяца, месяц, день недели
+        // Пока отключен так как сайт недоступен
+        // Проверка: https://downforeveryoneorjustme.com/stellarburgers.nomoreparties.site
+
+        // минуты, часы, день месяца, месяц, день недели
+        //pollSCM('0 3 * * *')
     }
 
     environment {
@@ -42,13 +46,6 @@ pipeline {
                     
                     sh pytestCmd
                 }
-                // sh '''
-                //     poetry run pytest --maxfail=3 --disable-warnings -q --junitxml=pytest-results.xml
-                // '''
-                // sh '''
-                //     poetry run pytest --maxfail=3 --disable-warnings -q --junitxml=pytest-results.xml --alluredir=allure-results
-                //     allure generate allure-results -o allure-report --clean
-                // '''
             }
             post {
                 always {

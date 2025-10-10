@@ -1,14 +1,8 @@
-from datetime import datetime
-import pytest
 import allure
 
-from src import data
-from src import links
-from src import locators
-from src.wait_er import wait_and_click, wait_and_send_keys, wait_for_url_contains
+from src import __locators
+from utils.wait_er import wait_and_click, wait_and_send_keys, wait_for_url_contains
 
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.wait import WebDriverWait
 
 def click_on_button_private_cabinet(driver):
     with allure.step('Кликнуть по кнопке "Личный кабинет"'):
